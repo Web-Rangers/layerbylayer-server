@@ -7,6 +7,12 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
+sqlalchemy = "^2.0.23"
+fastapi = "^0.104.1"
+uvicorn = "^0.24.0.post1"
+asyncpg = "^0.29.0"
+python-multipart = "^0.0.6"
+pydantic = "^2.4.2"
 
 
 [build-system]

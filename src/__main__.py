@@ -1,16 +1,18 @@
-# This is a sample Python script.
+from fastapi import FastAPI, HTTPException
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+from src.statistic_storage.statistic_storage import MyModel, statistic_storage
 
+conn = statistic_storage()
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+app = FastAPI()
 
 
-# Press the green button in the gutter to run the script.
+@app.post("/items/")
+async def create_item(item: MyModel):
+    await conn.add_item(item)
+    return 'suck'
+
+
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
