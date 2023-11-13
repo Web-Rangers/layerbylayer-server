@@ -1,44 +1,22 @@
+from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-from src.statistic_storage.env import STATISTIC_STORAGE__DSN
+from src.statistic_storage.env import ASYNC_STATISTIC_STORAGE__DSN, SYNC_STATISTIC_STORAGE__DSN
 from pydantic import BaseModel
 
-
-class MyModel(BaseModel):
-    id: int
-    name: str
-
-
-class StatisticStorageSession:
-    def __init__(self, dsn_str: str):
-        engine = create_async_engine(dsn_str, echo=True)
-        async_session_local = async_sessionmaker(bind=engine, expire_on_commit=False)
-        self._async_session_local = async_session_local
-        self._session: AsyncSession
-
-    async def __aenter__(self):
-        self._session = self._async_session_local()
-        return self._session
-
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        await self._session.commit()
+from src.statistic_storage.storage_session.storage_session import storage_session
+from src.statistic_storage.temperature_storage.temperature_storage import temperature_storage
 
 
 class StatisticStorage:
-    slots = (
-        '_session',
-    )
-
-    def __init__(self, dsn_str) -> None:
-        self._session = StatisticStorageSession(dsn_str)
-
-    async def add_item(self, item: MyModel) -> MyModel:
-        async with self._session as session:
-            session.add(item)
-            await session.commit()
-            return item
+    def __init__(self, async_dsn_str) -> None:
+        async_engine = create_async_engine(async_dsn_str, echo=True)
+        session = storage_session(async_engine)
+        self._async_engine = async_engine
+        self._session = storage_session(async_engine)
+        self.temperature_storage = temperature_storage(session)
 
 
 def statistic_storage() -> StatisticStorage:
-    return StatisticStorage(STATISTIC_STORAGE__DSN)
+    return StatisticStorage(ASYNC_STATISTIC_STORAGE__DSN)
 
 
