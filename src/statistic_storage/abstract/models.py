@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, Date, Double
-from sqlalchemy.orm import declarative_base
 
-Base = declarative_base()
+from src.statistic_storage.abstract.const import Base
 
 
 class Temperature(Base):
