@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, .ъ
 
 from src.statistic_storage.statistic_storage import statistic_storage
 from src.statistic_storage.temperature_storage.temperature_storage import TemperatureCreate
