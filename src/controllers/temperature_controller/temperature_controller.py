@@ -13,15 +13,14 @@ from src.statistic_storage.service.temperature_service.temperature_service impor
 router = APIRouter()
 
 
-@router.post("/items/")
+@router.post("/temperatures/add/")
 async def create_item(item: TemperatureDto, session_manger: SessionManager = Depends(get_session_manager)):
     async with session_manger as session:
-        #более ситуативно если надо сделать 2 операции на 2 разные модели
         new_item = await TemperatureService.add_item(Mapper.from_dto(item, Temperature), session)
     return Mapper.to_dto(new_item, TemperatureFullDto)
 
 
-@router.get("/items/")
+@router.get("/temperatures/all/")
 async def get_all_items(session_manger: SessionManager = Depends(get_session_manager)):
     async with session_manger as session:
         return [Mapper.to_dto(item, TemperatureDto) for item in await TemperatureService.get_all(session)]
